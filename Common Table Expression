@@ -1,0 +1,17 @@
+WITH customer_cte AS 								
+	(SELECT cu.customer_id,SUM(pa.amount) AS absolute_value							
+    	FROM customer cu							
+    		JOIN payment pa ON cu.customer_id = pa.customer_id						
+   			 GROUP BY cu.customer_id),					
+average_cte AS (SELECT AVG(absolute_value) AS average_value								
+   				 FROM customer_cte)				
+					SELECT co.country AS country_name, ci.city,			
+	cu.customer_id, cu.first_name, cu.last_name, cl.absolute_value							
+						FROM customer_cte cl		
+					JOIN customer cu ON cl.customer_id = cu.customer_id			
+					JOIN address ad ON cu.address_id = ad.address_id			
+					JOIN city ci ON ad.city_id = ci.city_id			
+					JOIN country co ON ci.country_id = co.country_id, average_cte			
+						WHERE cl.absolute_value > average_cte.average_value		
+							ORDER BY cl.absolute_value DESC	
+								LIMIT 15;
