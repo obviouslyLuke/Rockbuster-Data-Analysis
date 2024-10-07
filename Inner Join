@@ -1,0 +1,29 @@
+-- Retrieve customers and their total payment amounts for selected cities
+SELECT 
+    pa.customer_id, 
+    cu.first_name, 
+    cu.last_name, 
+    ci.city, 
+    co.country, 
+    SUM(pa.amount) AS total_amount
+FROM 
+    payment pa
+INNER JOIN 
+    customer cu ON pa.customer_id = cu.customer_id
+INNER JOIN 
+    address ad ON cu.address_id = ad.address_id
+INNER JOIN 
+    city ci ON ad.city_id = ci.city_id
+INNER JOIN 
+    country co ON ci.country_id = co.country_id
+WHERE 
+    ci.city IN ('Aurora', 'Atlixo', 'Xintai', 'Adoni', 'Dhuli (Dhulia)', 
+                'Kurashiki', 'Pingxiang', 'Civas', 'Cilaya', 'So Leopoldo')
+GROUP BY 
+    pa.customer_id, 
+    cu.first_name, 
+    cu.last_name, 
+    ci.city, 
+    co.country
+ORDER BY 
+    total_amount DESC;
